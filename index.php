@@ -1,17 +1,20 @@
-<?php 
-session_start();
-if (!isset($_SESSION['loggedin'])) {
-  header("Location: login.php");
-}
-
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Little Sun</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Little Sun</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
-    <p>Hello world!</p>
+  <div class="flex">
+    <?php include_once(__DIR__ . "/nav.inc.php") ?>
+    <div class="mx-14 my-10">
+      <h2 class="font-bold text-3xl pt-1">Hello World!</h2>
+    </div>
+  </div>
 </body>
+
 </html>
