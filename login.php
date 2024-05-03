@@ -11,6 +11,7 @@ if (!empty($_POST)) {
 
     if ($user->canLogin()) {
         header('Location: index.php');
+        
     } else {
         $error = true;
     }
@@ -18,35 +19,35 @@ if (!empty($_POST)) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Little Sun</title>
+    <title>Sign In</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+<body class="bg-black flex justify-center items-center h-screen">
 
-<body>
-    <div class="form">
-        <form action="" method="post">
-            <h2>Sign In</h2>
+    <div class="bg-yellow-400 p-10 rounded shadow-md">
+        <form action="" method="post" class="space-y-4">
+            <h2 class="text-2xl font-bold mb-4">Sign In</h2>
             <?php if (isset($error)) : ?>
-                <div style="color: red;">
+                <div class="text-red-500">
                     <p>Something went wrong... Please try again!</p>
                 </div>
             <?php endif; ?>
-            <div class="form__field">
-                <label for="Email">Email</label>
-                <input type="text" name="email">
+            <div class="flex flex-col">
+                <label for="email" class="text-sm font-medium">Email</label>
+                <input type="text" name="email" id="email" class="mt-1 p-2 border rounded focus:outline-none focus:ring focus:border-blue-400">
             </div>
-            <div class="form__field">
-                <label for="Password">Password</label>
-                <input type="password" name="password">
+            <div class="flex flex-col">
+                <label for="password" class="text-sm font-medium">Password</label>
+                <input type="password" name="password" id="password" class="mt-1 p-2 border rounded focus:outline-none focus:ring focus:border-blue-400">
             </div>
-            <div class="form__field">
-                <input type="submit" value="Sign up" class="button">
+            <div class="flex justify-center">
+                <input type="submit" value="Sign up" class="mt-4 px-4 py-2 bg-black text-white rounded cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out">
             </div>
         </form>
     </div>
 </body>
-
 </html>
