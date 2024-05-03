@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once(__DIR__ . "/bootstrap.php");
 
 $locations = Location::getAll();

@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once(__DIR__ . "/bootstrap.php");
 
 if (isset($_GET['id']) && isset($_GET['mode'])) {
