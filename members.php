@@ -39,23 +39,11 @@ if (!empty($_POST)) {
 </head>
 
 <body>
-    <div class="flex">
+    <div class="flex w-screen relative">
         <?php include_once(__DIR__ . "/nav.inc.php") ?>
-        <div class="flex-1 mx-16 my-10">
-            <h2 class="font-bold text-3xl pt-1">HUB Managers</h2>
-            <article>
-                <?php if (isset($error)) : ?>
-                    <div class="bg-red-200 border-red-300 border-2 rounded p-2">
-                        <p class="text-red-800"><?php echo $error; ?></p>
-                    </div>
-                <?php endif; ?>
-                <?php if (isset($success)) : ?>
-                    <div class="bg-green-200 border-green-300 border-2 rounded p-2">
-                        <p class="text-green-800"><?php echo $success; ?></p>
-                    </div>
-                <?php endif; ?>
-            </article>
-            <form class="w-full grid grid-cols-2 gap-x-14 gap-y-6 pt-16 px-12" action="" method="post">
+        <div class="ml-72 px-14 py-10 flex-1">
+            <h2 class="font-extrabold text-4xl pb-12">HUB Members</h2>
+            <form class="w-full grid grid-cols-2 gap-x-14 gap-y-6 px-12" action="" method="post">
                 <div>
                     <label class="block py-1 font-semibold text-lg" for="firstname">Firstname</label>
                     <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="firstname" type="text" name="firstname">

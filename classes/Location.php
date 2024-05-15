@@ -36,14 +36,14 @@ class Location
     public static function getAll()
     {
         $conn = Db::getConnection();
-        $statement = $conn->prepare("select * from locations");
+        $statement = $conn->prepare("select * from locations order by id desc");
         $statement->execute();
         $locations = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         return $locations;
     }
 
-    public static function getLocationInfo($id)
+    public static function getLocationWithId($id)
     {
         $conn = Db::getConnection();
         $statement = $conn->prepare("select * from locations where id = :id");
@@ -54,28 +54,30 @@ class Location
         return $location;
     }
 
-    public static function updateLocation($id, $name, $managerId){
+    public static function updateLocation($id, $name, $userId){
         $conn = Db::getConnection();
         
-        $statement = $conn->prepare("UPDATE locations SET name = :name, manager_id = :managerId WHERE id = :id");
+        $statement = $conn->prepare("update locations set name = :name where id = :id");
         $statement->bindValue(":id", $id);
         $statement->bindValue(":name", $name);
-        $statement->bindValue(":managerId", $managerId);
         $statement->execute();
 
-        $statement = $conn->prepare("UPDATE users SET location_id = :id WHERE id = :managerId");
+        $statement = $conn->prepare("update users set location_id = :id WHERE id = :userId");
         $statement->bindValue(":id", $id);
-        $statement->bindValue(":managerId", $managerId);
+        $statement->bindValue(":userId", $userId);
         $statement->execute();
     }
 
     public static function deleteLocation($id)
     {
         $conn = Db::getConnection();
-        $statement = $conn->prepare("DELETE FROM locations WHERE id = :id");
-        $statement->bindValue(":id", $id);
-        $result = $statement->execute();
 
-        return $result;
+        $statement = $conn->prepare("delete from locations where id = :id");
+        $statement->bindValue(":id", $id);
+        $statement->execute();
+
+        $statement = $conn->prepare("update users set location_id = 0 where location_id = :id");
+        $statement->bindValue(":id", $id);
+        $statement->execute();
     }
 }

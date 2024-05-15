@@ -1,81 +1,78 @@
 <?php
 session_start();
-// Include the bootstrap file which includes other necessary files like Task.php
 include_once(__DIR__ . "/bootstrap.php");
 
+if (isset($_POST['create'])) {
+    $task = new Task();
+    $task->setTask($_POST['task']);
 
-// Create an instance of Task class
-$taskManager = new Task();
-
-// Check if form is submitted to create a task
-if (isset($_POST['create_task'])) {
-    if (!empty($_POST['task_name'])) {
-        $taskName = $_POST['task_name'];
-        $taskManager->addTask($taskName);
-
-        // Redirect to avoid form resubmission
-        header("Location: tasks.php");
-        exit();
-    } else {
-        echo "Task name is required.";
-    }
+    $task->save();
 }
 
-// Check if delete button is clicked
-if (isset($_POST['delete_task'])) {
-    $taskId = $_POST['task_id'];
-    $taskManager->deleteTask($taskId);
-    
-    // Redirect to avoid form resubmission
-    header("Location: tasks.php");
-    exit();
+if (isset($_POST['delete'])) {
+    Task::deleteTask($_POST['id']);
 }
 
-// Fetch all tasks
-$tasks = $taskManager->getAllTasks();
+$tasks = Task::getAll();
 
 ?>
 
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Task</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
-    <div class="flex">
+    <div class="flex w-screen relative">
         <?php include_once(__DIR__ . "/nav.inc.php") ?>
-        <div class="mx-14 my-10">
-            <h2 class="font-bold text-3xl pt-1">Create Task</h2>
-            <!-- Formulier voor het maken van een nieuwe taak -->
-            <form method="post" action="tasks.php" class="mt-6">
+        <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;"></div>
+        <div class="ml-72 px-14 py-10 flex-1">
+            <h2 class="font-extrabold text-4xl pb-12">HUB Tasks</h2>
+            <div class="flex justify-between w-full pb-10">
+                <form class="w-10/12" action="" method="get">
+                    <input class="w-2/5 px-3.5 py-2 text-lg rounded border-gray-300 border-2" type="text" id="search" name="q" placeholder="Search...">
+                    <button class="px-3.5 py-2 text-lg rounded border-gray-300 border-2 bg-gray-100" type="submit">Search</button>
+                </form>
+                <button class="flex items-center justify-center gap-2.5 px-4 uppercase rounded bg-yellow-400 task__btn">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 650 650">
+                        <path d="M325,650c-42.3,0-83.52-7.98-122.51-23.72-40.43-16.32-76.62-40.28-107.55-71.22-30.93-30.94-54.9-67.12-71.22-107.55C7.98,408.52,0,367.3,0,325s7.98-83.52,23.72-122.51c16.32-40.43,40.28-76.62,71.22-107.55s67.12-54.9,107.55-71.22C241.48,7.98,282.7,0,325,0s83.52,7.98,122.51,23.72c40.43,16.32,76.62,40.28,107.55,71.22,30.93,30.94,54.9,67.12,71.22,107.55,15.74,38.99,23.72,80.21,23.72,122.51s-7.98,83.52-23.72,122.51c-16.32,40.43-40.28,76.62-71.22,107.55-30.94,30.93-67.12,54.9-107.55,71.22-38.99,15.74-80.21,23.72-122.51,23.72ZM325,56.15c-72.14,0-139.74,27.87-190.36,78.49-50.61,50.61-78.49,118.22-78.49,190.36s27.87,139.74,78.49,190.36c50.61,50.61,118.22,78.49,190.36,78.49s139.74-27.87,190.36-78.49c50.61-50.61,78.49-118.22,78.49-190.36s-27.87-139.74-78.49-190.36c-50.61-50.61-118.22-78.49-190.36-78.49Z" />
+                        <path d="M443.98,296.92h-90.9s0-90.9,0-90.9c0-15.51-12.57-28.08-28.08-28.08s-28.08,12.57-28.08,28.08v90.9s-90.9,0-90.9,0c-15.51,0-28.08,12.57-28.08,28.08s12.57,28.08,28.08,28.08h90.9s0,90.9,0,90.9c0,15.51,12.57,28.08,28.08,28.08s28.08-12.57,28.08-28.08v-90.9s90.9,0,90.9,0c15.51,0,28.08-12.57,28.08-28.08s-12.57-28.08-28.08-28.08Z" />
+                    </svg>
+                    <span class="font-semibold whitespace-nowrap">Create task</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-3 gap-8">
+                <?php foreach ($tasks as $task) : ?>
+                    <div class="flex items-center justify-between p-6 border-gray-200 border-2 rounded-lg bg-white shadow-md">
+                        <span class="font-semibold text-lg"><?php echo $task['name'] ?></span>
+                        <form class="flex gap-3" action="" method="post">
+                            <input type="hidden" name="id" value="<?php echo $task['id']; ?>">
+                            <button class="w-10 h-10 p-2.5 bg-black/80 rounded-full shadow-md" type="submit" name="delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 800">
+                                    <path class="w-full h-auto fill-current text-yellow-400" d="M536.25,710h-272.5c-56.35,0-102.19-46.04-102.19-102.63v-342.11c-18.81,0-34.06-15.32-34.06-34.21s15.25-34.21,34.06-34.21h68.12v-34.21c0-56.59,45.84-102.63,102.19-102.63h136.25c56.35,0,102.19,46.04,102.19,102.63v34.21h68.13c18.81,0,34.06,15.32,34.06,34.21s-15.25,34.21-34.06,34.21v342.11c0,56.59-45.84,102.63-102.19,102.63ZM229.69,265.26v342.11c0,18.86,15.28,34.21,34.06,34.21h272.5c18.78,0,34.06-15.35,34.06-34.21v-342.11H229.69ZM297.81,196.84h204.38v-34.21c0-18.86-15.28-34.21-34.06-34.21h-136.25c-18.78,0-34.06,15.35-34.06,34.21v34.21ZM468.13,573.16c-18.81,0-34.06-15.32-34.06-34.21v-171.05c0-18.89,15.25-34.21,34.06-34.21s34.06,15.32,34.06,34.21v171.05c0,18.89-15.25,34.21-34.06,34.21ZM331.88,573.16c-18.81,0-34.06-15.32-34.06-34.21v-171.05c0-18.89,15.25-34.21,34.06-34.21s34.06,15.32,34.06,34.21v171.05c0,18.89-15.25,34.21-34.06,34.21Z" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <!--
+            <form method="post" action="" class="mt-6">
                 <div class="mb-4">
                     <label for="task_name" class="block text-sm font-semibold mb-1">Task Name:</label>
                     <input type="text" name="task_name" id="task_name" class="border border-gray-300 rounded px-3 py-2 w-full" required>
                 </div>
                 <button type="submit" name="create_task" class="bg-yellow-400 text-white font-semibold py-2 px-4 rounded hover:bg-yellow-500">Create Task</button>
             </form>
-            <!-- Lijst met taken -->
-            <!-- Lijst met taken -->
-<div class="mt-8">
-    <h2 class="font-bold text-3xl pt-1">Task List</h2>
-    <ul class="mt-4">
-        <?php foreach ($tasks as $task): ?>
-            <li class="text-lg">
-                <?= $task['name'] ?>
-                <!-- Delete button with confirmation dialog -->
-                <form method="post" action="tasks.php" style="display:inline;">
-                    <input type="hidden" name="task_id" value="<?= $task['id'] ?>">
-                    <button type="submit" name="delete_task" onclick="return confirm('Are you sure you want to delete this task?');" class="bg-red-500 text-white font-semibold py-1 px-2 rounded hover:bg-red-600">Delete</button>
-                </form>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</div>
-
-    </div>
+            -->
+        </div>
+        <script src="js/script.js"></script>
 </body>
+
 </html>

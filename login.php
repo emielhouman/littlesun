@@ -11,43 +11,36 @@ if (!empty($_POST)) {
 
     if ($user->canLogin()) {
         header('Location: index.php');
-        
-    } else {
-        $error = true;
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
-    <!-- Include Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Little Sun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-black flex justify-center items-center h-screen">
 
-    <div class="bg-yellow-400 p-10 rounded shadow-md">
-        <form action="" method="post" class="space-y-4">
-            <h2 class="text-2xl font-bold mb-4">Sign In</h2>
-            <?php if (isset($error)) : ?>
-                <div class="text-red-500">
-                    <p>Something went wrong... Please try again!</p>
+<body>
+    <div class="flex items-center justify-center w-screen h-screen bg-black">
+        <div class="w-1/3 p-12 rounded border-2 border-gray-300 bg-white">
+            <h2 class="font-bold text-3xl pb-8">Sign in</h2>
+            <form class="flex flex-col gap-4" action="" method="post">
+                <div class="flex flex-col gap-1.5">
+                    <label class="font-semibold" for="email">Email</label>
+                    <input class="w-full h-12 px-2.5 rounded border-2 border-gray-300 bg-white" id="email" name="email" type="text">
                 </div>
-            <?php endif; ?>
-            <div class="flex flex-col">
-                <label for="email" class="text-sm font-medium">Email</label>
-                <input type="text" name="email" id="email" class="mt-1 p-2 border rounded focus:outline-none focus:ring focus:border-blue-400">
-            </div>
-            <div class="flex flex-col">
-                <label for="password" class="text-sm font-medium">Password</label>
-                <input type="password" name="password" id="password" class="mt-1 p-2 border rounded focus:outline-none focus:ring focus:border-blue-400">
-            </div>
-            <div class="flex justify-center">
-                <input type="submit" value="Sign up" class="mt-4 px-4 py-2 bg-black text-white rounded cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out">
-            </div>
-        </form>
+                <div class="flex flex-col gap-1.5">
+                    <label class="font-semibold" for="password">Password</label>
+                    <input class="w-full h-12 px-2.5 rounded border-2 border-gray-300 bg-white" id="password" name="password" type="password">
+                </div>
+                <input class="mt-6 h-12 font-extrabold uppercase bg-yellow-400 text-black rounded cursor-pointer" type="submit" value="Sign in">
+            </form>
+        </div>
     </div>
 </body>
+
 </html>

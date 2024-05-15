@@ -14,7 +14,7 @@ session_start();
 <body>
   <div class="flex">
     <?php include_once(__DIR__ . "/nav.inc.php") ?>
-    <div class="mx-14 my-10">
+    <div class="ml-72 px-14 py-10">
       <h2 class="font-bold text-3xl pt-1">Hello World!</h2>
     </div>
   </div>
