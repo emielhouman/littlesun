@@ -28,49 +28,6 @@
         });
     }
 
-    const handleManagerForm = () => {
-        const $body = document.body;
-        const $popup = document.getElementById('popup-scrn');
-        $body.style.overflow = 'hidden';
-        $popup.style.display = 'flex';
-
-        const $closeBtns = $popup.querySelectorAll('.close__btn');
-        const $selectBtns = $popup.querySelectorAll('.select__btn');
-
-        $closeBtns.forEach($closeBtn => {
-            $closeBtn.addEventListener('click', () => {
-                $body.style.overflow = 'visible';
-                $popup.style.display = 'none';
-            });
-        });
-
-        $selectBtns.forEach($selectBtn => {
-            $selectBtn.addEventListener('click', () => {
-                handleManagerSelect($selectBtn);
-            });
-        });
-    }
-
-    handleManagerSelect = ($selectedManager) => {
-        const managerId = $selectedManager.dataset.id;
-        const managerName = $selectedManager.querySelector(`.manager`).textContent;
-
-        const $managerInput = document.querySelector('.manager__input');
-        $managerInput.value = managerId;
-
-        const $managerBtn = document.querySelector('.manager__btn');
-        $managerBtn.innerHTML = `<span class="text-lg">${managerName}</span>
-        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 650 650">
-            <path d="M325,650c-43.7,0-86.18-8.63-126.27-25.66-38.66-16.42-73.41-39.9-103.29-69.78-29.88-29.88-53.36-64.63-69.78-103.29C8.63,411.18,0,368.7,0,325s8.63-86.18,25.66-126.27c16.42-38.66,39.9-73.41,69.78-103.29,29.88-29.88,64.63-53.36,103.29-69.78C238.82,8.63,281.3,0,325,0s86.18,8.63,126.27,25.66c38.66,16.42,73.41,39.9,103.29,69.78,29.88,29.88,53.36,64.63,69.78,103.29,17.03,40.09,25.66,82.57,25.66,126.27s-8.63,86.18-25.66,126.27c-16.42,38.66-39.9,73.41-69.78,103.29-29.88,29.88-64.63,53.36-103.29,69.78-40.09,17.03-82.57,25.66-126.27,25.66ZM325,56.09c-71.5,0-138.94,28.06-189.89,79.02-50.95,50.95-79.02,118.39-79.02,189.89s28.06,138.94,79.02,189.89c50.95,50.95,118.39,79.02,189.89,79.02s138.94-28.06,189.89-79.02c50.95-50.95,79.02-118.39,79.02-189.89s-28.06-138.94-79.02-189.89c-50.95-50.95-118.39-79.02-189.89-79.02Z" />
-            <path d="M364.66,325l64.21-64.21c10.95-10.95,10.95-28.71,0-39.66-10.95-10.95-28.71-10.95-39.66,0l-64.21,64.21-64.21-64.21c-10.95-10.95-28.71-10.95-39.66,0-10.95,10.95-10.95,28.71,0,39.66l64.21,64.21-64.21,64.21c-10.95,10.95-10.95,28.71,0,39.66,5.48,5.48,12.65,8.21,19.83,8.21s14.35-2.74,19.83-8.21l64.21-64.21,64.21,64.21c5.48,5.48,12.65,8.21,19.83,8.21s14.35-2.74,19.83-8.21c10.95-10.95,10.95-28.71,0-39.66l-64.21-64.21Z" />
-        </svg>`;
-
-        const $body = document.body;
-        const $popup = document.getElementById('popup-scrn');
-        $body.style.overflow = 'visible';
-        $popup.style.display = 'none';
-    }
-
     const handleTaskForm = () => {
         const $body = document.body;
         const $popup = document.getElementById('popup-scrn');
@@ -100,21 +57,133 @@
         });
     };
 
+    const handleManagerForm = () => {
+        const $body = document.body;
+        const $popup = document.getElementById('popup-scrn');
+        $body.style.overflow = 'hidden';
+        $popup.style.display = 'flex';
+
+        const $closeBtns = $popup.querySelectorAll('.close__btn');
+
+        $closeBtns.forEach($closeBtn => {
+            $closeBtn.addEventListener('click', () => {
+                $body.style.overflow = 'visible';
+                $popup.style.display = 'none';
+            });
+        });
+    }
+
+    const handleLocationSelect = () => {
+        const $body = document.body;
+        const $popup = document.getElementById('popup-scrn');
+        $body.style.overflow = 'hidden';
+        $popup.style.display = 'flex';
+
+        const $closeBtns = $popup.querySelectorAll('.close__btn');
+        const $selectBtns = $popup.querySelectorAll('.select__btn');
+
+        $closeBtns.forEach($closeBtn => {
+            $closeBtn.addEventListener('click', () => {
+                $body.style.overflow = 'visible';
+                $popup.style.display = 'none';
+            });
+        });
+
+        $selectBtns.forEach($selectBtn => {
+            $selectBtn.addEventListener('click', () => {
+                selectLocation($selectBtn);
+            });
+        });
+    }
+
+    const selectLocation = ($selectedLocation) => {
+        const locationId = $selectedLocation.dataset.id;
+        const locationName = $selectedLocation.querySelector(`.location`).textContent;
+
+        const $locationInput = document.querySelector('.location__input');
+        $locationInput.value = locationId;
+
+        const $locationSelect = document.querySelector('.location__select');
+        $locationSelect.innerHTML = `<span class="text-lg">${locationName}</span>
+        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 650 650">
+            <path d="M325,650c-43.7,0-86.18-8.63-126.27-25.66-38.66-16.42-73.41-39.9-103.29-69.78-29.88-29.88-53.36-64.63-69.78-103.29C8.63,411.18,0,368.7,0,325s8.63-86.18,25.66-126.27c16.42-38.66,39.9-73.41,69.78-103.29,29.88-29.88,64.63-53.36,103.29-69.78C238.82,8.63,281.3,0,325,0s86.18,8.63,126.27,25.66c38.66,16.42,73.41,39.9,103.29,69.78,29.88,29.88,53.36,64.63,69.78,103.29,17.03,40.09,25.66,82.57,25.66,126.27s-8.63,86.18-25.66,126.27c-16.42,38.66-39.9,73.41-69.78,103.29-29.88,29.88-64.63,53.36-103.29,69.78-40.09,17.03-82.57,25.66-126.27,25.66ZM325,56.09c-71.5,0-138.94,28.06-189.89,79.02-50.95,50.95-79.02,118.39-79.02,189.89s28.06,138.94,79.02,189.89c50.95,50.95,118.39,79.02,189.89,79.02s138.94-28.06,189.89-79.02c50.95-50.95,79.02-118.39,79.02-189.89s-28.06-138.94-79.02-189.89c-50.95-50.95-118.39-79.02-189.89-79.02Z" />
+            <path d="M364.66,325l64.21-64.21c10.95-10.95,10.95-28.71,0-39.66-10.95-10.95-28.71-10.95-39.66,0l-64.21,64.21-64.21-64.21c-10.95-10.95-28.71-10.95-39.66,0-10.95,10.95-10.95,28.71,0,39.66l64.21,64.21-64.21,64.21c-10.95,10.95-10.95,28.71,0,39.66,5.48,5.48,12.65,8.21,19.83,8.21s14.35-2.74,19.83-8.21l64.21-64.21,64.21,64.21c5.48,5.48,12.65,8.21,19.83,8.21s14.35-2.74,19.83-8.21c10.95-10.95,10.95-28.71,0-39.66l-64.21-64.21Z" />
+        </svg>`;
+
+        const $body = document.body;
+        const $popup = document.getElementById('popup-scrn');
+        $body.style.overflow = 'visible';
+        $popup.style.display = 'none';
+    }
+
+    const handleManagerSelect = () => {
+        const $body = document.body;
+        const $popup = document.getElementById('popup-scrn');
+        $body.style.overflow = 'hidden';
+        $popup.style.display = 'flex';
+
+        const $closeBtns = $popup.querySelectorAll('.close__btn');
+        const $selectBtns = $popup.querySelectorAll('.select__btn');
+
+        $closeBtns.forEach($closeBtn => {
+            $closeBtn.addEventListener('click', () => {
+                $body.style.overflow = 'visible';
+                $popup.style.display = 'none';
+            });
+        });
+
+        $selectBtns.forEach($selectBtn => {
+            $selectBtn.addEventListener('click', () => {
+                selectManager($selectBtn);
+            });
+        });
+    }
+
+    const selectManager = ($selectedManager) => {
+        const managerId = $selectedManager.dataset.id;
+        const managerName = $selectedManager.querySelector(`.manager`).textContent;
+
+        const $managerInput = document.querySelector('.manager__input');
+        $managerInput.value = managerId;
+
+        const $managerSelect = document.querySelector('.manager__select');
+        $managerSelect.innerHTML = `<span class="text-lg">${managerName}</span>
+        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 650 650">
+            <path d="M325,650c-43.7,0-86.18-8.63-126.27-25.66-38.66-16.42-73.41-39.9-103.29-69.78-29.88-29.88-53.36-64.63-69.78-103.29C8.63,411.18,0,368.7,0,325s8.63-86.18,25.66-126.27c16.42-38.66,39.9-73.41,69.78-103.29,29.88-29.88,64.63-53.36,103.29-69.78C238.82,8.63,281.3,0,325,0s86.18,8.63,126.27,25.66c38.66,16.42,73.41,39.9,103.29,69.78,29.88,29.88,53.36,64.63,69.78,103.29,17.03,40.09,25.66,82.57,25.66,126.27s-8.63,86.18-25.66,126.27c-16.42,38.66-39.9,73.41-69.78,103.29-29.88,29.88-64.63,53.36-103.29,69.78-40.09,17.03-82.57,25.66-126.27,25.66ZM325,56.09c-71.5,0-138.94,28.06-189.89,79.02-50.95,50.95-79.02,118.39-79.02,189.89s28.06,138.94,79.02,189.89c50.95,50.95,118.39,79.02,189.89,79.02s138.94-28.06,189.89-79.02c50.95-50.95,79.02-118.39,79.02-189.89s-28.06-138.94-79.02-189.89c-50.95-50.95-118.39-79.02-189.89-79.02Z" />
+            <path d="M364.66,325l64.21-64.21c10.95-10.95,10.95-28.71,0-39.66-10.95-10.95-28.71-10.95-39.66,0l-64.21,64.21-64.21-64.21c-10.95-10.95-28.71-10.95-39.66,0-10.95,10.95-10.95,28.71,0,39.66l64.21,64.21-64.21,64.21c-10.95,10.95-10.95,28.71,0,39.66,5.48,5.48,12.65,8.21,19.83,8.21s14.35-2.74,19.83-8.21l64.21-64.21,64.21,64.21c5.48,5.48,12.65,8.21,19.83,8.21s14.35-2.74,19.83-8.21c10.95-10.95,10.95-28.71,0-39.66l-64.21-64.21Z" />
+        </svg>`;
+
+        const $body = document.body;
+        const $popup = document.getElementById('popup-scrn');
+        $body.style.overflow = 'visible';
+        $popup.style.display = 'none';
+    }
+
     const init = () => {
         const $taskBtn = document.querySelector('.task__btn');
+        const $managerSelect = document.querySelector('.manager__select');
         const $managerBtn = document.querySelector('.manager__btn');
+        const $locationSelect = document.querySelector('.location__select');
         const $locationBtn = document.querySelector('.location__btn');
 
         if ($locationBtn) {
             $locationBtn.addEventListener('click', handleLocationForm);
         }
 
-        if ($managerBtn && $managerBtn.getAttribute('disabled') === null) {
+        if ($managerBtn) {
             $managerBtn.addEventListener('click', handleManagerForm);
         }
-
+        
         if ($taskBtn) {
             $taskBtn.addEventListener('click', handleTaskForm);
+        }
+
+        if ($managerSelect && $managerSelect.getAttribute('disabled') === null) {
+            $managerSelect.addEventListener('click', handleManagerSelect);
+        }
+
+        if ($locationSelect && $locationSelect.getAttribute('disabled') === null){
+            $locationSelect.addEventListener('click', handleLocationSelect);
         }
     }
 

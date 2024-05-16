@@ -16,9 +16,7 @@ class Manager extends User
         $roleId = $this->getRoleId();
         $locationId = $this->getLocationId();
 
-        $options = [
-            'cost' => 12
-        ];
+        $options = ['cost' => 12];
         $password = password_hash($password, PASSWORD_DEFAULT, $options);
 
         $statement->bindValue(":firstname", $firstname);
@@ -30,6 +28,48 @@ class Manager extends User
         $result = $statement->execute();
 
         return $result;
+    }
+
+    public function update()
+    {
+        $conn = Db::getConnection();
+
+        $passwordUpdated = !empty($this->getPassword());
+        $statement = $conn->prepare("update users set firstname = :firstname, lastname = :lastname, email = :email, location_id = :locationId" . ($passwordUpdated ? ", password = :password" : "") . " where id = :id");
+
+        $statement->bindValue(":id", $this->getId());
+        $statement->bindValue(":firstname", $this->getFirstname());
+        $statement->bindValue(":lastname", $this->getLastname());
+        $statement->bindValue(":email", $this->getEmail());
+        $statement->bindValue(":locationId", $this->getLocationId());
+        
+        if ($passwordUpdated) {
+            $options = ['cost' => 12];
+            $password = password_hash($this->getPassword(), PASSWORD_DEFAULT, $options);
+
+            $statement->bindValue(":password", $password);
+        }
+        
+        $statement->execute();
+    }
+
+    public static function deleteManager($id)
+    {
+        $conn = Db::getConnection();
+        $statement = $conn->prepare("delete from users where id = :id");
+        $statement->bindValue(":id", $id);
+        $statement->execute();
+    }
+
+    public static function getManagerWithId($id)
+    {
+        $conn = Db::getConnection();
+        $statement = $conn->prepare("select * from users where id = :id");
+        $statement->bindValue(":id", $id);
+        $statement->execute();
+        $manager = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $manager;
     }
 
     public static function getManagerWithLocationId($id)
