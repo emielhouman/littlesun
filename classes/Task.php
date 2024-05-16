@@ -53,13 +53,22 @@ class Task
         return $result;
     }
 
-    public function assignTask()
+    public function assignTasks($tasks)
     {
         $conn = Db::getConnection();
-        $statement = $conn->prepare("insert into user_tasks (user_id, task_id) values (:userId, :taskId)");
+
+        // Remove existing tasks
+        $statement = $conn->prepare("delete from user_tasks where user_id = :userId");
         $statement->bindValue(":userId", $this->getUserId());
-        $statement->bindValue(":taskId", $this->getTaskId());
         $statement->execute();
+
+        // Assign new tasks
+        foreach ($tasks as $taskId) {
+            $statement = $conn->prepare("insert into user_tasks (user_id, task_id) values (:userId, :taskId)");
+            $statement->bindValue(":userId", $this->getUserId());
+            $statement->bindValue(":taskId", $taskId);
+            $statement->execute();
+        }
     }
 
     public static function deleteTask($id)
@@ -80,13 +89,32 @@ class Task
         return $tasks;
     }
 
-    public static function getAssignedTasks()
+    public static function getTasksByUserId($userId)
     {
         $conn = Db::getConnection();
-        $statement = $conn->prepare("select * from user_tasks");
+        $statement = $conn->prepare("select * from user_tasks where user_id = :userId");
+        $statement->bindValue(":userId", $userId);
         $statement->execute();
         $assignedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         return $assignedTasks;
     }
+
+    public static function getTasksFromUserId($userId)
+    {
+        $conn = Db::getConnection();
+        $statement = $conn->prepare("
+            SELECT tasks.* 
+            FROM tasks 
+            JOIN user_tasks ON tasks.id = user_tasks.task_id 
+            WHERE user_tasks.user_id = :userId
+        ");
+        $statement->bindValue(":userId", $userId);
+        $statement->execute();
+        $tasks = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        return $tasks;
+    }
+
+    
 }
