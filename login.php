@@ -22,10 +22,12 @@ if (!empty($_POST)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Little Sun</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/login.css">
 </head>
 
 <body>
-    <div class="flex items-center justify-center w-screen h-screen bg-black">
+
+    <div class="flex items-center justify-center w-screen h-screen bg-black bg-opacity-100 bg-[url('./assets/background.png')] bg-cover bg-center">
         <div class="w-1/3 p-12 rounded border-2 border-gray-300 bg-white">
             <h2 class="font-bold text-3xl pb-8">Sign in</h2>
             <form class="flex flex-col gap-4" action="" method="post">

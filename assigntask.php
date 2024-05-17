@@ -2,14 +2,23 @@
 session_start();
 include_once(__DIR__ . "/bootstrap.php");
 
+// Assuming the manager's ID is stored in the session
+$managerId = $_SESSION['user_id']; // Adjust this based on your session variable
+$manager = Member::getMemberWithId($managerId);
+$managerLocationId = $manager['location_id'];
+
 if (isset($_POST['assign_tasks'])) {
     $task = new Task();
     $task->setUserId($_POST['member']);
     $task->assignTasks(isset($_POST['tasks']) ? $_POST['tasks'] : []);
+    
+    // Set success message
+    $_SESSION['success_message'] = "Tasks have been updated successfully.";
 }
 
 $tasks = Task::getAll();
-$members = Member::getAll();
+// Filter members based on the manager's location
+$members = Member::getAll($managerLocationId);
 
 $assignedTasks = [];
 if (isset($_POST['member'])) {
@@ -32,6 +41,14 @@ if (isset($_POST['member'])) {
         <?php include_once(__DIR__ . "/nav.inc.php") ?>
         <div class="ml-72 px-14 py-10 flex-1">
             <h2 class="font-extrabold text-4xl pb-12">Assign Task</h2>
+            
+            <?php if (isset($_SESSION['success_message'])) : ?>
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+                    <p><?php echo $_SESSION['success_message']; ?></p>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php endif; ?>
+            
             <form class="w-1/3 grid grid-rows-2 gap-6" method="post" action="">
                 <div class="flex flex-col gap-1.5">
                     <label class="font-semibold text-lg" for="member">Select a HUB Member:</label>
