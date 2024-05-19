@@ -22,17 +22,53 @@ if (isset($_POST['create'])) {
         $manager->setLocationId($locationId);
 
         $manager->save();
-        $success = "Manager added!";
+        
+        // Set success message
+        $_SESSION['success_message'] = "Manager added successfully!";
+        
+        // Redirect to avoid form resubmission
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    }
+}
+
+if (isset($_POST['delete'])) {
+    $manager = Manager::getManagerWithId($_POST['id']);
+    $_SESSION['deleted_manager'] = $manager;
+    Manager::deleteManager($_POST['id']);
+    
+    // Set delete message
+    $_SESSION['delete_message'] = "Manager deleted successfully!";
+    
+    // Redirect to avoid form resubmission
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+if (isset($_POST['undo_delete'])) {
+    if (isset($_SESSION['deleted_manager'])) {
+        $deletedManager = $_SESSION['deleted_manager'];
+        $manager = new Manager();
+        $manager->setFirstname($deletedManager['firstname']);
+        $manager->setLastname($deletedManager['lastname']);
+        $manager->setEmail($deletedManager['email']);
+        $manager->setPassword($deletedManager['password']);
+        $manager->setRoleId($deletedManager['role_id']);
+        $manager->setLocationId($deletedManager['location_id']);
+        $manager->save();
+
+        unset($_SESSION['deleted_manager']);
+        $_SESSION['success_message'] = "Manager restored successfully!";
+        
+        // Redirect to avoid form resubmission
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     }
 }
 
 if (isset($_POST['edit'])) {
     header("Location: manager.php?id=" . $_POST['id'] . "&mode=edit");
     exit;
-}
-
-if (isset($_POST['delete'])) {
-    Manager::deleteManager($_POST['id']);
 }
 
 $managers = Manager::getAll();
@@ -47,6 +83,13 @@ $locations = Location::getAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Little Sun</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function confirmDelete(event) {
+            if (!confirm("Are you sure you want to delete this manager?")) {
+                event.preventDefault();
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -95,6 +138,27 @@ $locations = Location::getAll();
         </div>
         <div class="ml-72 px-14 py-10 flex-1">
             <h2 class="font-extrabold text-4xl pb-12">HUB Managers</h2>
+
+            <?php if (isset($_SESSION['success_message'])) : ?>
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+                    <p><?php echo $_SESSION['success_message']; ?></p>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['delete_message'])) : ?>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                    <p>
+                        <?php echo $_SESSION['delete_message']; ?>
+                        <form class="inline" action="" method="post">
+                            <input type="hidden" name="undo_delete" value="1">
+                            <button type="submit" class="underline text-red-700">Undo</button>
+                        </form>
+                    </p>
+                </div>
+                <?php unset($_SESSION['delete_message']); ?>
+            <?php endif; ?>
+
             <div class="flex justify-between w-full pb-10">
                 <form class="w-10/12" action="" method="get">
                     <input class="w-2/5 px-3.5 py-2 text-lg rounded border-gray-300 border-2" type="text" id="search" name="q" placeholder="Search...">
@@ -128,7 +192,7 @@ $locations = Location::getAll();
                                     <path class="w-full h-auto fill-current text-yellow-400" style="fill-rule: evenodd" d="M664.14,101.08c-34.78-34.78-91.16-34.78-125.94,0L117.96,521.32c-12.43,12.43-20.9,28.26-24.35,45.5l-17.43,87.13c-8.31,41.54,28.32,78.16,69.86,69.86l87.13-17.43c17.24-3.45,33.07-11.92,45.5-24.35l420.24-420.24c34.78-34.78,34.78-91.16,0-125.93l-34.77-34.78ZM580.18,143.06c11.59-11.59,30.39-11.59,41.98,0l34.77,34.78c11.59,11.59,11.59,30.39,0,41.98l-79.3,79.3-76.75-76.75,79.3-79.3ZM458.9,264.34l-298.96,298.96c-4.14,4.14-6.97,9.42-8.12,15.17l-17.43,87.13,87.13-17.43c5.75-1.15,11.02-3.97,15.17-8.12l298.96-298.96-76.75-76.75Z" />
                                 </svg>
                             </button>
-                            <button class="w-10 h-10 p-2.5 bg-black/80 rounded-full shadow-md" type="submit" name="delete">
+                            <button class="w-10 h-10 p-2.5 bg-black/80 rounded-full shadow-md" type="submit" name="delete" onclick="confirmDelete(event)">
                                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 800">
                                     <path class="w-full h-auto fill-current text-yellow-400" d="M536.25,710h-272.5c-56.35,0-102.19-46.04-102.19-102.63v-342.11c-18.81,0-34.06-15.32-34.06-34.21s15.25-34.21,34.06-34.21h68.12v-34.21c0-56.59,45.84-102.63,102.19-102.63h136.25c56.35,0,102.19,46.04,102.19,102.63v34.21h68.13c18.81,0,34.06,15.32,34.06,34.21s-15.25,34.21-34.06,34.21v342.11c0,56.59-45.84,102.63-102.19,102.63ZM229.69,265.26v342.11c0,18.86,15.28,34.21,34.06,34.21h272.5c18.78,0,34.06-15.35,34.06-34.21v-342.11H229.69ZM297.81,196.84h204.38v-34.21c0-18.86-15.28-34.21-34.06-34.21h-136.25c-18.78,0-34.06,15.35-34.06,34.21v34.21ZM468.13,573.16c-18.81,0-34.06-15.32-34.06-34.21v-171.05c0-18.89,15.25-34.21,34.06-34.21s34.06,15.32,34.06,34.21v171.05c0,18.89-15.25,34.21-34.06,34.21ZM331.88,573.16c-18.81,0-34.06-15.32-34.06-34.21v-171.05c0-18.89,15.25-34.21,34.06-34.21s34.06,15.32,34.06,34.21v171.05c0,18.89-15.25,34.21-34.06,34.21Z" />
                                 </svg>

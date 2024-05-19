@@ -116,5 +116,14 @@ class Task
         return $tasks;
     }
 
+    public static function getTaskById($id)
+    {
+        $conn = Db::getConnection();
+        $statement = $conn->prepare("SELECT * FROM tasks WHERE id = :id");
+        $statement->bindValue(":id", $id, PDO::PARAM_INT);
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_ASSOC);
+    }
+
     
 }
