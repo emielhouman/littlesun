@@ -13,7 +13,7 @@ if (isset($_POST['create'])) {
 
 if (isset($_POST['delete'])) {
     // Store the deleted task in the session
-    $_SESSION['deleted_task'] = Task::getTaskById($_POST['id']);
+    $_SESSION['deleted_task'] = Task::getTaskWithId($_POST['id']);
     Task::deleteTask($_POST['id']);
     $_SESSION['delete_message'] = "Task deleted successfully!";
     header("Location: ".$_SERVER['PHP_SELF']);
