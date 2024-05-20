@@ -1,4 +1,6 @@
 {
+    const $calendarCmds = {};
+
     const handleLocationForm = () => {
         const $body = document.body;
         const $popup = document.getElementById('popup-scrn');
@@ -159,12 +161,97 @@
         $popup.style.display = 'none';
     }
 
+    const navigateCalendar = (e) => {
+        const $command = e.target.dataset.command;
+
+        if ($command === 'prev' || $command === 'next') {
+            $calendarCmds[$command] = ($calendarCmds[$command] ?? 0) + 1;
+        } else if ($command === 'today') {
+            $calendarCmds.prev = 0;
+            $calendarCmds.next = 0;
+        }
+
+        console.log($calendarCmds);
+
+        let formData = new FormData();
+        formData.append('calendarCmds', JSON.stringify($calendarCmds));
+
+        fetch('./index.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    const $calendar = document.querySelector('.calendar');
+                    const $calendarTitle = document.querySelector('.calendar__title');
+
+                    $calendar.innerHTML = result.calendar;
+                    $calendarTitle.textContent = result.calendarTitle;
+                } else {
+                    console.error('Failed to update calendar:', result.message);
+                }
+            })
+    }
+
+    const handleCalendarForm = () => {
+        const $body = document.body;
+        const $popup = document.getElementById('popup-scrn');
+        $body.style.overflow = 'hidden';
+        $popup.style.display = 'flex';
+
+        const $closeBtns = $popup.querySelectorAll('.close__btn');
+        $closeBtns.forEach($closeBtn => {
+            $closeBtn.addEventListener('click', () => {
+                $body.style.overflow = 'visible';
+                $popup.style.display = 'none';
+            });
+        });
+
+        const $createBtn = $popup.querySelector('.create__btn');
+        $createBtn.addEventListener('click', () => {
+            createCalendarTask($popup);
+        });
+    }
+
+    const createCalendarTask = ($popup) => {
+        const $taskInput = $popup.querySelector('select[name="task"]').value;
+        const $userInput = $popup.querySelector('select[name="user"]').value;
+        const $dateInput = $popup.querySelector('input[name="date"]').value;
+        const $startTimeInput = $popup.querySelector('input[name="start_time"]').value;
+        const $endTimeInput = $popup.querySelector('input[name="end_time"]').value;
+        
+        let formData = new FormData();
+        formData.append('task_id', $taskInput);
+        formData.append('user_id', $userInput);
+        formData.append('date', $dateInput);
+        formData.append('start_time', $startTimeInput);
+        formData.append('end_time', $endTimeInput);
+
+        fetch('./ajax/save_schedule_task.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(result => {
+                $body.style.overflow = 'visible';
+                $popup.style.display = 'none';
+
+                console.log("succes:", result);
+            })
+            .catch(error => {
+                console.error('error:', error);
+            });
+    }
+
     const init = () => {
         const $taskBtn = document.querySelector('.task__btn');
         const $managerSelect = document.querySelector('.manager__select');
         const $managerBtn = document.querySelector('.manager__btn');
         const $locationSelect = document.querySelector('.location__select');
         const $locationBtn = document.querySelector('.location__btn');
+        const $calendarBtns = document.querySelectorAll('.calendar__btn');
+        const $calendarTaskBtn = document.querySelector('.schedule__btn');
 
         if ($locationBtn) {
             $locationBtn.addEventListener('click', handleLocationForm);
@@ -173,7 +260,7 @@
         if ($managerBtn) {
             $managerBtn.addEventListener('click', handleManagerForm);
         }
-        
+
         if ($taskBtn) {
             $taskBtn.addEventListener('click', handleTaskForm);
         }
@@ -182,8 +269,18 @@
             $managerSelect.addEventListener('click', handleManagerSelect);
         }
 
-        if ($locationSelect && $locationSelect.getAttribute('disabled') === null){
+        if ($locationSelect && $locationSelect.getAttribute('disabled') === null) {
             $locationSelect.addEventListener('click', handleLocationSelect);
+        }
+
+        if ($calendarBtns) {
+            $calendarBtns.forEach($calendarBtn => {
+                $calendarBtn.addEventListener('click', e => navigateCalendar(e));
+            });
+        }
+
+        if ($calendarTaskBtn) {
+            $calendarTaskBtn.addEventListener('click', handleCalendarForm);
         }
     }
 

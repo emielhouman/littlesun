@@ -57,12 +57,10 @@ class Task
     {
         $conn = Db::getConnection();
 
-        // Remove existing tasks
         $statement = $conn->prepare("delete from user_tasks where user_id = :userId");
         $statement->bindValue(":userId", $this->getUserId());
         $statement->execute();
 
-        // Assign new tasks
         foreach ($tasks as $taskId) {
             $statement = $conn->prepare("insert into user_tasks (user_id, task_id) values (:userId, :taskId)");
             $statement->bindValue(":userId", $this->getUserId());
@@ -77,6 +75,16 @@ class Task
         $statement = $conn->prepare("delete from tasks where id = :id");
         $statement->bindValue(":id", $id);
         $statement->execute();
+    }
+
+    public static function getTaskWithId($id) {
+        $conn = Db::getConnection();
+        $statement = $conn->prepare("select * from tasks where id = :id");
+        $statement->bindValue(":id", $id);
+        $statement->execute();
+        $task = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $task;
     }
 
     public static function getAll()
@@ -115,6 +123,4 @@ class Task
 
         return $tasks;
     }
-
-    
 }
