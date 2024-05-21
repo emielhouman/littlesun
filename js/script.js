@@ -170,8 +170,6 @@ const navigateCalendar = (e) => {
         $calendarCmds.next = 0;
     }
 
-    console.log($calendarCmds);
-
     let formData = new FormData();
     formData.append('calendarCmds', JSON.stringify($calendarCmds));
 
@@ -188,7 +186,7 @@ const navigateCalendar = (e) => {
                 $calendar.innerHTML = result.calendar;
                 $calendarTitle.textContent = result.calendarTitle;
             } else {
-                console.error('Failed to update calendar:', result.message);
+                console.error('failed to update calendar:', result.message);
             }
         })
 }
@@ -208,11 +206,16 @@ const handleCalendarForm = () => {
     });
 
     const $createBtn = $popup.querySelector('.create__btn');
-    $createBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        createCalendarTask($popup);
-    });
-}
+    // Remove any existing event listener first
+    $createBtn.removeEventListener('click', handleCreateClick);
+    $createBtn.addEventListener('click', handleCreateClick);
+};
+
+const handleCreateClick = (e) => {
+    e.preventDefault();
+    const $popup = document.getElementById('popup-scrn');
+    createCalendarTask($popup);
+};
 
 const createCalendarTask = ($popup) => {
     const $taskInput = $popup.querySelector('select[name="task"]').value;
@@ -220,11 +223,6 @@ const createCalendarTask = ($popup) => {
     const $dateInput = $popup.querySelector('input[name="date"]').value;
     const $startTimeInput = $popup.querySelector('input[name="start_time"]').value;
     const $endTimeInput = $popup.querySelector('input[name="end_time"]').value;
-
-    if (!$taskInput || !$userInput || !$dateInput || !$startTimeInput || !$endTimeInput) {
-        alert('All fields are required!');
-        return;
-    }
 
     let formData = new FormData();
     formData.append('task_id', $taskInput);
@@ -237,22 +235,33 @@ const createCalendarTask = ($popup) => {
         method: 'POST',
         body: formData
     })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                console.log("Success:", result);
-                const $body = document.body;
-                $body.style.overflow = 'visible';
-                $popup.style.display = 'none';
-                location.reload(); // Reload the page
-            } else {
-                console.error('Failed to save task:', result.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
+    .then(response => response.json())
+    .then(result => {
+        console.log("success:", result);
+        const $body = document.body;
+
+        const $calendarCell = document.querySelector(`.calendar__cell[data-date="${result.body.date}"]`);
+        if ($calendarCell) $calendarCell.innerHTML += createTaskElement(result.body);
+
+        $body.style.overflow = 'visible';
+        $popup.style.display = 'none';
+    })
+    .catch(error => {
+        console.error('error:', error);
+    });
+};
+
+const createTaskElement = (task) => {
+    const taskName = task.task;
+    const taskStartTime = task.start_time;
+    const taskEndTime = task.end_time;
+
+    const $result = `<div class="w-full p-1 px-1.5 flex flex-col self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
+    <span class="font-bold text-xs">${taskName}</span>
+    <span class="font-light pt-0.5">${taskStartTime} - ${taskEndTime}</span></div>`;
+
+    return $result;
+};
 
 const init = () => {
     const $taskBtn = document.querySelector('.task__btn');
