@@ -73,18 +73,21 @@ function generateCalendar($currentMonth, $currentYear)
         if ($i < $firstMonthDay - 1) {
             $day = $lastDayOfPrevMonth - $firstMonthDay + $i + 2;
             $date = sprintf('%04d-%02d-%02d', $prevYear, $prevMonth, $day);
-            $html .= '<div class="h-28 p-1.5 flex flex-col items-end gap-1 text-sm text-black/25 border border-gray-200 bg-gray-100" data-date="' . $date . '">
+            $html .= '<div class="calendar__day h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/25 border border-gray-200 bg-gray-100 overflow-y-auto" data-date="' . $date . '">
             <span class="h-7 w-7 mb-1 flex items-center justify-center">' . $day . '</span>';
 
             foreach ($scheduleTasks as $scheduleTask) {
                 $task = Task::getTaskWithId($scheduleTask['task_id']);
                 $taskDate = $scheduleTask['date'];
-                $taskTime = substr($scheduleTask['start_time'], 0, 5);;
+                $taskTime = substr($scheduleTask['start_time'], 0, 5);
+                $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
+                $member = Member::getMemberWithId($scheduleTask['user_id']);
 
                 if ($taskDate === $date) {
-                    $html .= '<div class="w-full p-0.5 px-1.5 flex justify-between self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
+                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xxs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
                     <span class="font-bold">' . $task['name'] . '</span>
-                    <span class"">' . $taskTime . '</span></div>';
+                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span>
+                    <span>' . $member['firstname'] . ' ' . $member['lastname'] . '</span></div>';
                 };
             };
 
@@ -92,18 +95,21 @@ function generateCalendar($currentMonth, $currentYear)
         } elseif ($i >= $firstMonthDay - 1 + $lastMonthDay) {
             $day = $i - $firstMonthDay + 2 - $lastMonthDay;
             $date = sprintf('%04d-%02d-%02d', $nextYear, $nextMonth, $day);
-            $html .= '<div class="h-28 p-1.5 flex flex-col items-end gap-1 text-sm text-black/25 border border-gray-200 bg-gray-100" data-date="' . $date . '">
+            $html .= '<div class="calendar__day h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/25 border border-gray-200 bg-gray-100 overflow-y-auto" data-date="' . $date . '">
             <span class="h-7 w-7 mb-1 flex items-center justify-center">' . $day . '</span>';
 
             foreach ($scheduleTasks as $scheduleTask) {
                 $task = Task::getTaskWithId($scheduleTask['task_id']);
                 $taskDate = $scheduleTask['date'];
                 $taskTime = substr($scheduleTask['start_time'], 0, 5);
+                $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
+                $member = Member::getMemberWithId($scheduleTask['user_id']);
 
                 if ($taskDate === $date) {
-                    $html .= '<div class="w-full p-0.5 px-1.5 flex justify-between self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
+                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xxs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
                     <span class="font-bold">' . $task['name'] . '</span>
-                    <span class"">' . $taskTime . '</span></div>';
+                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span>
+                    <span>' . $member['firstname'] . ' ' . $member['lastname'] . '</span></div>';
                 };
             };
 
@@ -111,18 +117,21 @@ function generateCalendar($currentMonth, $currentYear)
         } else {
             $day = $i - $firstMonthDay + 2;
             $date = sprintf('%04d-%02d-%02d', $currentYear, $currentMonth, $day);
-            $html .= '<div class="h-28 p-1.5 flex flex-col items-end gap-1 text-sm text-black/80 border border-gray-200 bg-white cursor-pointer calendar__cell" data-date="' . $date . '">
+            $html .= '<div class="calendar__day h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/80 border border-gray-200 bg-white cursor-pointer calendar__cell overflow-y-auto" data-date="' . $date . '">
             <span class="h-7 w-7 mb-1 flex items-center justify-center ' . ($date === date('Y-m-d') ? 'text-white font-extrabold rounded-full bg-yellow-400' : '') . '">' . $day . '</span>';
 
             foreach ($scheduleTasks as $scheduleTask) {
                 $task = Task::getTaskWithId($scheduleTask['task_id']);
                 $taskDate = $scheduleTask['date'];
                 $taskTime = substr($scheduleTask['start_time'], 0, 5);
+                $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
+                $member = Member::getMemberWithId($scheduleTask['user_id']);
 
                 if ($taskDate === $date) {
-                    $html .= '<div class="w-full p-0.5 px-1.5 flex justify-between self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
+                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xxs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
                     <span class="font-bold">' . $task['name'] . '</span>
-                    <span class"">' . $taskTime . '</span></div>';
+                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span>
+                    <span>' . $member['firstname'] . ' ' . $member['lastname'] . '</span></div>';
                 };
             };
 
@@ -146,6 +155,15 @@ $members = Member::getAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Little Sun</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .text-xxs {
+            font-size: 10px;
+        }
+        .calendar__day {
+            max-height: 7rem;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 
 <body>
@@ -154,11 +172,11 @@ $members = Member::getAll();
         <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;">
             <div class="w-7/12 p-14 bg-white rounded-lg relative">
                 <h3 class="font-bold text-2xl pb-8">Schedule HUB Task:</h3>
-                <form class="w-full grid grid-cols-2 gap-x-12 gap-y-6">
+                <form id="schedule-form" class="w-full grid grid-cols-2 gap-x-12 gap-y-6">
                     <div class="flex flex-col gap-1.5">
                         <label class="font-semibold text-lg" for="task">HUB Task:</label>
-                        <select class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="task" name="task">
-                            <option value="0">Select a HUB Task</option>
+                        <select class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="task" name="task" required>
+                            <option value="">Select a HUB Task</option>
                             <?php foreach ($tasks as $task): ?>
                                 <option value="<?php echo $task['id'] ?>"><?php echo $task['name'] ?></option>
                             <?php endforeach; ?>
@@ -166,8 +184,8 @@ $members = Member::getAll();
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <label class="font-semibold text-lg" for="user">HUB Member:</label>
-                        <select class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="user" name="user">
-                            <option value="0">Select a HUB Member</option>
+                        <select class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="user" name="user" required>
+                            <option value="">Select a HUB Member</option>
                             <?php foreach ($members as $member): ?>
                                 <option value="<?php echo $member['id'] ?>"><?php echo $member['firstname'] . " " . $member['lastname'] ?></option>
                             <?php endforeach; ?>
@@ -175,21 +193,21 @@ $members = Member::getAll();
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <label class="font-semibold text-lg" for="date">Date:</label>
-                        <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="date" name="date" type="date" value="<?php echo date('Y-m-d') ?>">
+                        <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="date" name="date" type="date" value="<?php echo date('Y-m-d') ?>" required>
                     </div>
                     <div class="flex gap-4">
                         <div class="w-full flex flex-col gap-1.5">
                             <label class="font-semibold text-lg" for="start_time">Starts:</label>
-                            <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="start_time" name="start_time" type="time" value="08:30">
+                            <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="start_time" name="start_time" type="time" value="08:30" required>
                         </div>
                         <div class="w-full flex flex-col gap-1.5">
                             <label class="font-semibold text-lg" for="end_time">Ends:</label>
-                            <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="end_time" name="end_time" type="time" value="09:30">
+                            <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="end_time" name="end_time" type="time" value="09:30" required>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-between gap-12 col-span-2">
                         <button class="w-full p-2.5 font-extrabold uppercase rounded cursor-pointer bg-gray-100 border-gray-300 border-2 close__btn" type="button">Cancel</button>
-                        <button class="w-full p-2.5 font-extrabold uppercase rounded cursor-pointer bg-yellow-400 border-yellow-400 border-2 create__btn" type="button">Create</button>
+                        <button class="w-full p-2.5 font-extrabold uppercase rounded cursor-pointer bg-yellow-400 border-yellow-400 border-2 create__btn" type="submit">Create</button>
                     </div>
                 </form>
                 <button class="w-7 h-7 m-3.5 p-px absolute right-0 top-0 font-bold opacity-25 leading-none close__btn">
