@@ -3,7 +3,7 @@
 include_once(__DIR__ . "/Db.php");
 
 class User
-{   
+{
     private $id;
     private $firstname;
     private $lastname;
@@ -100,7 +100,7 @@ class User
     public function canLogin()
     {
         $conn = Db::getConnection();
-        $statement = $conn->prepare("select id, password from users where email = :email");
+        $statement = $conn->prepare("select id, role_id, password from users where email = :email");
 
         $email = $this->getEmail();
         $password = $this->getPassword();
@@ -118,7 +118,7 @@ class User
         }
     }
 
-    public static function getUserInfo($id)
+    public static function getUserDetails($id)
     {
         $conn = Db::getConnection();
         $statement = $conn->prepare("select firstname, lastname, role_id from users where id = :id");
