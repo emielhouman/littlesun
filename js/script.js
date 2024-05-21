@@ -36,29 +36,17 @@ const handleTaskForm = () => {
     $popup.style.display = 'flex';
 
     $popup.innerHTML = `<div class="w-1/3 p-12 bg-white rounded-lg relative">
-    <h3 class="font-bold text-2xl pb-8">HUB Task:</h3>
-    <form id="task-form" class="flex flex-col gap-6">
-        <select class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="task" name="task" required>
-            <option value="">Select a HUB Task</option>
-            <!-- Options populated by server -->
-        </select>
-        <select class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="user" name="user" required>
-            <option value="">Select a HUB Member</option>
-            <!-- Options populated by server -->
-        </select>
-        <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="date" name="date" type="date" value="<?php echo date('Y-m-d') ?>" required>
-        <div class="flex gap-4">
-            <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="start_time" name="start_time" type="time" value="08:30" required>
-            <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="end_time" name="end_time" type="time" value="09:30" required>
-        </div>
-        <div class="mt-6 flex justify-between gap-12 col-span-2">
-            <button class="w-full p-2.5 font-extrabold uppercase rounded cursor-pointer bg-gray-100 border-gray-300 border-2 close__btn" type="button">Cancel</button>
-            <button class="w-full p-2.5 font-extrabold uppercase rounded cursor-pointer bg-yellow-400 border-yellow-400 border-2 create__btn" type="button">Create</button>
-        </div>
-    </form>
-    <button class="w-7 h-7 m-3.5 p-px absolute right-0 top-0 font-bold opacity-25 leading-none close__btn">
-        <img class="w-full h-auto" src="./assets/close.svg" alt="close icon">
-    </button></div>`;
+        <h3 class="font-bold text-2xl pb-8">HUB Task:</h3>
+        <form class="flex flex-col gap-6" action="" method="post">
+            <input class="w-full px-3.5 py-2.5 col-span-2 text-lg rounded border-gray-300 border-2" type="text" id="task" name="task" placeholder="Task name...">
+            <div class="flex justify-between gap-4">
+                <button class="w-1/2 px-3 py-2.5 font-extrabold uppercase rounded cursor-pointer bg-gray-100 border-gray-300 border-2 close__btn" name="cancel" type="button">Cancel</button>
+                <button class="w-1/2 px-3 py-2.5 font-extrabold uppercase rounded cursor-pointer bg-yellow-400 border-yellow-400 border-2" name="create" type="submit">Create</button>
+            </div>
+        </form>
+        <button class="w-7 h-7 m-3.5 p-px absolute right-0 top-0 font-bold opacity-25 leading-none close__btn">
+            <img class="w-full h-auto" src="./assets/close.svg" alt="close icon">
+        </button></div>`;
 
     const $closeBtns = $popup.querySelectorAll('.close__btn');
 
@@ -67,13 +55,6 @@ const handleTaskForm = () => {
             $body.style.overflow = 'visible';
             $popup.style.display = 'none';
         });
-    });
-
-    const $createBtn = $popup.querySelector('.create__btn');
-    $createBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        createCalendarTask($popup);
-        
     });
 };
 
@@ -244,7 +225,7 @@ const createCalendarTask = ($popup) => {
         alert('All fields are required!');
         return;
     }
-    
+
     let formData = new FormData();
     formData.append('task_id', $taskInput);
     formData.append('user_id', $userInput);

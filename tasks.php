@@ -7,7 +7,7 @@ if (isset($_POST['create'])) {
     $task->setTask($_POST['task']);
     $task->save();
     $_SESSION['success_message'] = "Task added successfully!";
-    header("Location: ".$_SERVER['PHP_SELF']);
+    header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 
@@ -16,7 +16,7 @@ if (isset($_POST['delete'])) {
     $_SESSION['deleted_task'] = Task::getTaskWithId($_POST['id']);
     Task::deleteTask($_POST['id']);
     $_SESSION['delete_message'] = "Task deleted successfully!";
-    header("Location: ".$_SERVER['PHP_SELF']);
+    header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 
@@ -28,7 +28,7 @@ if (isset($_POST['undo_delete'])) {
         unset($_SESSION['deleted_task']);
         $_SESSION['success_message'] = "Task restored successfully!";
     }
-    header("Location: ".$_SERVER['PHP_SELF']);
+    header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 
@@ -55,23 +55,31 @@ $tasks = Task::getAll();
 <body>
     <div class="flex w-screen relative">
         <?php include_once(__DIR__ . "/nav.inc.php") ?>
-        <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;"></div>
+        <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;">
+            <form method="post" action="" class="mt-6">
+                <div class="mb-4">
+                    <label for="task_name" class="block text-sm font-semibold mb-1">Task Name:</label>
+                    <input type="text" name="task_name" id="task_name" class="border border-gray-300 rounded px-3 py-2 w-full" required>
+                </div>
+                <button type="submit" name="create_task" class="bg-yellow-400 text-white font-semibold py-2 px-4 rounded hover:bg-yellow-500">Create Task</button>
+            </form>
+        </div>
         <div class="ml-72 px-14 py-10 flex-1">
             <h2 class="font-extrabold text-4xl pb-12">HUB Tasks</h2>
-            
+
             <?php if (isset($_SESSION['success_message'])) : ?>
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
                     <p><?php echo $_SESSION['success_message']; ?></p>
                 </div>
                 <?php unset($_SESSION['success_message']); ?>
             <?php endif; ?>
-            
+
             <?php if (isset($_SESSION['delete_message'])) : ?>
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
                     <p><?php echo $_SESSION['delete_message']; ?>
-                        <form action="" method="post" style="display:inline;">
-                            <button type="submit" name="undo_delete" class="underline text-red-700">Undo</button>
-                        </form>
+                    <form action="" method="post" style="display:inline;">
+                        <button type="submit" name="undo_delete" class="underline text-red-700">Undo</button>
+                    </form>
                     </p>
                 </div>
                 <?php unset($_SESSION['delete_message']); ?>

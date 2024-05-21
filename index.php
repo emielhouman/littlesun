@@ -73,21 +73,19 @@ function generateCalendar($currentMonth, $currentYear)
         if ($i < $firstMonthDay - 1) {
             $day = $lastDayOfPrevMonth - $firstMonthDay + $i + 2;
             $date = sprintf('%04d-%02d-%02d', $prevYear, $prevMonth, $day);
-            $html .= '<div class="calendar__day h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/25 border border-gray-200 bg-gray-100 overflow-y-auto" data-date="' . $date . '">
-            <span class="h-7 w-7 mb-1 flex items-center justify-center">' . $day . '</span>';
+            $html .= '<div class="h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/25 border border-gray-200 bg-gray-100" data-date="' . $date . '">
+            <span class="p-0.5 mb-1 flex items-center justify-center">' . $day . '</span>';
 
             foreach ($scheduleTasks as $scheduleTask) {
                 $task = Task::getTaskWithId($scheduleTask['task_id']);
                 $taskDate = $scheduleTask['date'];
                 $taskTime = substr($scheduleTask['start_time'], 0, 5);
                 $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
-                $member = Member::getMemberWithId($scheduleTask['user_id']);
 
                 if ($taskDate === $date) {
-                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xxs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
+                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
                     <span class="font-bold">' . $task['name'] . '</span>
-                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span>
-                    <span>' . $member['firstname'] . ' ' . $member['lastname'] . '</span></div>';
+                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span></div>';
                 };
             };
 
@@ -95,21 +93,19 @@ function generateCalendar($currentMonth, $currentYear)
         } elseif ($i >= $firstMonthDay - 1 + $lastMonthDay) {
             $day = $i - $firstMonthDay + 2 - $lastMonthDay;
             $date = sprintf('%04d-%02d-%02d', $nextYear, $nextMonth, $day);
-            $html .= '<div class="calendar__day h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/25 border border-gray-200 bg-gray-100 overflow-y-auto" data-date="' . $date . '">
-            <span class="h-7 w-7 mb-1 flex items-center justify-center">' . $day . '</span>';
+            $html .= '<div class="h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/25 border border-gray-200 bg-gray-100" data-date="' . $date . '">
+            <span class="p-0.5 mb-1 flex items-center justify-center">' . $day . '</span>';
 
             foreach ($scheduleTasks as $scheduleTask) {
                 $task = Task::getTaskWithId($scheduleTask['task_id']);
                 $taskDate = $scheduleTask['date'];
                 $taskTime = substr($scheduleTask['start_time'], 0, 5);
                 $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
-                $member = Member::getMemberWithId($scheduleTask['user_id']);
 
                 if ($taskDate === $date) {
-                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xxs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
+                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
                     <span class="font-bold">' . $task['name'] . '</span>
-                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span>
-                    <span>' . $member['firstname'] . ' ' . $member['lastname'] . '</span></div>';
+                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span></div>';
                 };
             };
 
@@ -117,21 +113,19 @@ function generateCalendar($currentMonth, $currentYear)
         } else {
             $day = $i - $firstMonthDay + 2;
             $date = sprintf('%04d-%02d-%02d', $currentYear, $currentMonth, $day);
-            $html .= '<div class="calendar__day h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/80 border border-gray-200 bg-white cursor-pointer calendar__cell overflow-y-auto" data-date="' . $date . '">
-            <span class="h-7 w-7 mb-1 flex items-center justify-center ' . ($date === date('Y-m-d') ? 'text-white font-extrabold rounded-full bg-yellow-400' : '') . '">' . $day . '</span>';
+            $html .= '<div class="h-28 p-2 flex flex-col items-end gap-1 text-xs text-black/75 border border-gray-200 bg-white cursor-pointer overflow-y-auto calendar__cell" data-date="' . $date . '">
+            <span class="w-7 mb-1 p-px flex items-center ' . ($date === date('Y-m-d') ? 'justify-center font-semibold text-white rounded-full bg-yellow-400' : 'justify-end') . '">' . $day . '</span>';
 
             foreach ($scheduleTasks as $scheduleTask) {
                 $task = Task::getTaskWithId($scheduleTask['task_id']);
                 $taskDate = $scheduleTask['date'];
-                $taskTime = substr($scheduleTask['start_time'], 0, 5);
+                $taskStartTime = substr($scheduleTask['start_time'], 0, 5);
                 $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
-                $member = Member::getMemberWithId($scheduleTask['user_id']);
 
                 if ($taskDate === $date) {
                     $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xxs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
                     <span class="font-bold">' . $task['name'] . '</span>
-                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span>
-                    <span>' . $member['firstname'] . ' ' . $member['lastname'] . '</span></div>';
+                    <span>' . $taskStartTime . ' - ' . $taskEndTime . '</span></div>';
                 };
             };
 
@@ -155,15 +149,6 @@ $members = Member::getAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Little Sun</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .text-xxs {
-            font-size: 10px;
-        }
-        .calendar__day {
-            max-height: 7rem;
-            overflow-y: auto;
-        }
-    </style>
 </head>
 
 <body>
