@@ -66,6 +66,13 @@ $userlink = ($roleId == 2) ? "HUB Members" : "HUB Managers";
             </li>
 
             <?php endif; ?>
+
+            <li class="flex gap-4 items-center rounded p-3.5 my-2 hover:bg-gray-500 hover:bg-opacity-25">
+                <div class="w-8 h-auto">
+                    <img src="./assets/icons/calender.svg" alt="">
+                </div>
+                <a class="block font-semibold text-lg tracking-wide" href="calendar.php">Calendar</a>
+            </li>
         </ul>
         <div class="mt-auto">
             <a href="account.php">
