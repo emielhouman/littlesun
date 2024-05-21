@@ -12,7 +12,6 @@ if (isset($_POST['create'])) {
 }
 
 if (isset($_POST['delete'])) {
-    // Store the deleted task in the session
     $_SESSION['deleted_task'] = Task::getTaskWithId($_POST['id']);
     Task::deleteTask($_POST['id']);
     $_SESSION['delete_message'] = "Task deleted successfully!";
@@ -55,15 +54,7 @@ $tasks = Task::getAll();
 <body>
     <div class="flex w-screen relative">
         <?php include_once(__DIR__ . "/nav.inc.php") ?>
-        <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;">
-            <form method="post" action="" class="mt-6">
-                <div class="mb-4">
-                    <label for="task_name" class="block text-sm font-semibold mb-1">Task Name:</label>
-                    <input type="text" name="task_name" id="task_name" class="border border-gray-300 rounded px-3 py-2 w-full" required>
-                </div>
-                <button type="submit" name="create_task" class="bg-yellow-400 text-white font-semibold py-2 px-4 rounded hover:bg-yellow-500">Create Task</button>
-            </form>
-        </div>
+        <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;"></div>
         <div class="ml-72 px-14 py-10 flex-1">
             <h2 class="font-extrabold text-4xl pb-12">HUB Tasks</h2>
 

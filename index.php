@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST)) {
         }
     }
 
-    $calendar = generateCalendar($currentMonth, $currentYear);
+    $calendar = createCalendar($currentMonth, $currentYear);
     $calendarTitle = date('F Y', strtotime("$currentYear-$currentMonth-01"));
 
     header('Content-Type: application/json');
@@ -44,7 +44,31 @@ function calculateCalendarCells($firstMonthDay, $lastMonthDay)
     return $calendarCells; 
 }
 
-function generateCalendar($currentMonth, $currentYear)
+function createCalendarCells($day, $date, $tasks, $isCurrentMonth)
+{   
+    $cellClass = $isCurrentMonth ? 'text-black/75 bg-white cursor-pointer overflow-auto calendar__cell' : 'text-black/25 bg-gray-100';
+    $calendarCell = '<div class="h-28 p-1.5 flex flex-col items-end gap-1.5 text-xs border border-gray-200 ' . $cellClass . '" data-date="' . $date . '">
+    <span class="w-8 p-0.5 px-1 flex items-center ' . ($date === date('Y-m-d') ? 'justify-center font-extrabold text-white bg-yellow-400 rounded-full' : 'justify-end') . '">' . $day . '</span>';
+
+    foreach ($tasks as $task) {
+        $taskDate = $task['date'];
+        $taskStartTime = substr($task['start_time'], 0, 5);
+        $taskEndTime = substr($task['end_time'], 0, 5);
+        $taskInfo = Task::getTaskWithId($task['task_id']);
+
+        if ($taskDate === $date) {
+            $calendarCell .= '<div class="w-full p-1 px-1.5 flex flex-col self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
+            <span class="font-bold text-xs">' . $taskInfo['name'] . '</span>
+            <span class="font-light pt-0.5">' . $taskStartTime . ' - ' . $taskEndTime . '</span></div>';
+        };
+    };
+
+    $calendarCell .= '</div>';
+
+    return $calendarCell;
+}
+
+function createCalendar($currentMonth, $currentYear)
 {
     $firstMonthDay = date('N', strtotime("$currentYear-$currentMonth-01"));
     $lastMonthDay = date('t', strtotime("$currentYear-$currentMonth-01"));
@@ -67,78 +91,33 @@ function generateCalendar($currentMonth, $currentYear)
     $lastDayOfPrevMonth = date('t', strtotime("$prevYear-$prevMonth-01"));
 
     $html = '';
-    $scheduleTasks = Schedule::getAllTasks();
+    $tasks = ScheduledTask::getAll();
 
     for ($i = 0; $i < $calendarCells; $i++) {
         if ($i < $firstMonthDay - 1) {
             $day = $lastDayOfPrevMonth - $firstMonthDay + $i + 2;
             $date = sprintf('%04d-%02d-%02d', $prevYear, $prevMonth, $day);
-            $html .= '<div class="h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/25 border border-gray-200 bg-gray-100" data-date="' . $date . '">
-            <span class="p-0.5 mb-1 flex items-center justify-center">' . $day . '</span>';
-
-            foreach ($scheduleTasks as $scheduleTask) {
-                $task = Task::getTaskWithId($scheduleTask['task_id']);
-                $taskDate = $scheduleTask['date'];
-                $taskTime = substr($scheduleTask['start_time'], 0, 5);
-                $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
-
-                if ($taskDate === $date) {
-                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
-                    <span class="font-bold">' . $task['name'] . '</span>
-                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span></div>';
-                };
-            };
-
-            $html .= '</div>';
+            $isCurrentMonth = false;
+            $html .= createCalendarCells($day, $date, $tasks, $isCurrentMonth);
         } elseif ($i >= $firstMonthDay - 1 + $lastMonthDay) {
             $day = $i - $firstMonthDay + 2 - $lastMonthDay;
             $date = sprintf('%04d-%02d-%02d', $nextYear, $nextMonth, $day);
-            $html .= '<div class="h-28 p-1.5 flex flex-col items-end gap-1 text-xs text-black/25 border border-gray-200 bg-gray-100" data-date="' . $date . '">
-            <span class="p-0.5 mb-1 flex items-center justify-center">' . $day . '</span>';
-
-            foreach ($scheduleTasks as $scheduleTask) {
-                $task = Task::getTaskWithId($scheduleTask['task_id']);
-                $taskDate = $scheduleTask['date'];
-                $taskTime = substr($scheduleTask['start_time'], 0, 5);
-                $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
-
-                if ($taskDate === $date) {
-                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
-                    <span class="font-bold">' . $task['name'] . '</span>
-                    <span>' . $taskTime . ' - ' . $taskEndTime . '</span></div>';
-                };
-            };
-
-            $html .= '</div>';
+            $isCurrentMonth = false;
+            $html .= createCalendarCells($day, $date, $tasks, $isCurrentMonth);
         } else {
             $day = $i - $firstMonthDay + 2;
             $date = sprintf('%04d-%02d-%02d', $currentYear, $currentMonth, $day);
-            $html .= '<div class="h-28 p-2 flex flex-col items-end gap-1 text-xs text-black/75 border border-gray-200 bg-white cursor-pointer overflow-y-auto calendar__cell" data-date="' . $date . '">
-            <span class="w-7 mb-1 p-px flex items-center ' . ($date === date('Y-m-d') ? 'justify-center font-semibold text-white rounded-full bg-yellow-400' : 'justify-end') . '">' . $day . '</span>';
-
-            foreach ($scheduleTasks as $scheduleTask) {
-                $task = Task::getTaskWithId($scheduleTask['task_id']);
-                $taskDate = $scheduleTask['date'];
-                $taskStartTime = substr($scheduleTask['start_time'], 0, 5);
-                $taskEndTime = substr($scheduleTask['end_time'], 0, 5);
-
-                if ($taskDate === $date) {
-                    $html .= '<div class="w-full p-0.5 px-1.5 flex flex-col self-start text-xxs rounded border-2 border-yellow-400/75 bg-yellow-400/50">
-                    <span class="font-bold">' . $task['name'] . '</span>
-                    <span>' . $taskStartTime . ' - ' . $taskEndTime . '</span></div>';
-                };
-            };
-
-            $html .= '</div>';
+            $isCurrentMonth = true;
+            $html .= createCalendarCells($day, $date, $tasks, $isCurrentMonth);
         }
     }
 
     return $html;
 }
 
-$calendar = generateCalendar($currentMonth, $currentYear);
 $tasks = Task::getAll();
 $members = Member::getAll();
+$calendar = createCalendar($currentMonth, $currentYear);
 
 ?>
 <!DOCTYPE html>
@@ -182,21 +161,21 @@ $members = Member::getAll();
                     </div>
                     <div class="flex gap-4">
                         <div class="w-full flex flex-col gap-1.5">
-                            <label class="font-semibold text-lg" for="start_time">Starts:</label>
+                            <label class="font-semibold text-lg" for="start_time">From:</label>
                             <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="start_time" name="start_time" type="time" value="08:30" required>
                         </div>
                         <div class="w-full flex flex-col gap-1.5">
-                            <label class="font-semibold text-lg" for="end_time">Ends:</label>
+                            <label class="font-semibold text-lg" for="end_time">Till:</label>
                             <input class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="end_time" name="end_time" type="time" value="09:30" required>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-between gap-12 col-span-2">
                         <button class="w-full p-2.5 font-extrabold uppercase rounded cursor-pointer bg-gray-100 border-gray-300 border-2 close__btn" type="button">Cancel</button>
-                        <button class="w-full p-2.5 font-extrabold uppercase rounded cursor-pointer bg-yellow-400 border-yellow-400 border-2 create__btn" type="submit">Create</button>
+                        <button class="w-full p-2.5 font-extrabold uppercase rounded cursor-pointer bg-yellow-400 border-yellow-400 border-2 create__btn" type="button">Create</button>
                     </div>
                 </form>
                 <button class="w-7 h-7 m-3.5 p-px absolute right-0 top-0 font-bold opacity-25 leading-none close__btn">
-                    <img class="w-full h-auto" src="./assets/close.svg" alt="close icon">
+                    <img class="w-full h-auto" src="./assets/icons/close.svg" alt="close icon">
                 </button>
             </div>
         </div>
