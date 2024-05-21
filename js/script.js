@@ -173,7 +173,7 @@ const navigateCalendar = (e) => {
     let formData = new FormData();
     formData.append('calendarCmds', JSON.stringify($calendarCmds));
 
-    fetch('./index.php', {
+    fetch('./calendar.php', {
         method: 'POST',
         body: formData
     })
