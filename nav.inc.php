@@ -33,7 +33,7 @@ $navigationItems = [
         
     ],
     3 => [
-        ["icon" => "dashboard.svg", "label" => "Dashboard", "link" => "index.php"],
+        ["icon" => "dashboard.svg", "label" => "Dashboard", "link" => "timeoff.php"],
         ["icon" => "schedule.svg", "label" => "HUB Schedule", "link" => "schedule.php"],
     ],
 ];

@@ -93,4 +93,22 @@ class ScheduledTask
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
+
+    public static function getHoursWorked($userId, $startDate, $endDate)
+    {
+        $conn = Db::getConnection();
+        $statement = $conn->prepare("SELECT TIMESTAMPDIFF(HOUR, start_time, end_time) as hours FROM scheduled_tasks WHERE user_id = :userId AND date BETWEEN :startDate AND :endDate");
+        $statement->bindValue(":userId", $userId);
+        $statement->bindValue(":startDate", $startDate);
+        $statement->bindValue(":endDate", $endDate);
+        $statement->execute();
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $totalHours = 0;
+        foreach ($result as $row) {
+            $totalHours += $row['hours'];
+        }
+
+        return $totalHours;
+    }
 }
