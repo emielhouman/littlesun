@@ -123,4 +123,19 @@ class Task
 
         return $tasks;
     }
+
+    public function updateTask()
+{
+    $conn = Db::getConnection();
+    $statement = $conn->prepare("UPDATE tasks SET name = :task WHERE id = :id");
+
+    $task = $this->getTask();
+    $taskId = $this->getTaskId();
+    $statement->bindValue(":task", $task);
+    $statement->bindValue(":id", $taskId);
+    $result = $statement->execute();
+
+    return $result;
+}
+
 }

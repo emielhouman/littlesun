@@ -32,6 +32,16 @@ if (isset($_POST['undo_delete'])) {
     exit;
 }
 
+if (isset($_POST['update'])) {
+    $task = new Task();
+    $task->setTask($_POST['task_name']);
+    $task->setTaskId($_POST['id']);
+    $task->updateTask();
+    $_SESSION['success_message'] = "Task updated successfully!";
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
 $tasks = Task::getAll();
 ?>
 
@@ -49,13 +59,23 @@ $tasks = Task::getAll();
                 event.preventDefault();
             }
         }
+
+        function openEditModal(taskId, taskName) {
+            document.getElementById('edit-task-id').value = taskId;
+            document.getElementById('edit-task-name').value = taskName;
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
     </script>
 </head>
 
 <body>
     <div class="flex w-screen relative">
         <?php include_once(__DIR__ . "/nav.inc.php") ?>
-        <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;">
+        <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50 hidden">
             <form method="post" action="" class="mt-6">
                 <div class="mb-4">
                     <label for="task_name" class="block text-sm font-semibold mb-1">Task Name:</label>
@@ -104,7 +124,7 @@ $tasks = Task::getAll();
                         <span class="font-semibold text-xl"><?php echo $task['name'] ?></span>
                         <form class="flex gap-3" action="" method="post">
                             <input type="hidden" name="id" value="<?php echo $task['id']; ?>">
-                            <button class="w-10 h-10 p-2.5 bg-black/80 rounded-full shadow-md" type="submit" name="edit">
+                            <button type="button" class="w-10 h-10 p-2.5 bg-black/80 rounded-full shadow-md" onclick="openEditModal('<?php echo $task['id']; ?>', '<?php echo htmlspecialchars($task['name'], ENT_QUOTES); ?>')">
                                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 800">
                                     <path class="w-full h-auto fill-current text-yellow-400" style="fill-rule: evenodd" d="M664.14,101.08c-34.78-34.78-91.16-34.78-125.94,0L117.96,521.32c-12.43,12.43-20.9,28.26-24.35,45.5l-17.43,87.13c-8.31,41.54,28.32,78.16,69.86,69.86l87.13-17.43c17.24-3.45,33.07-11.92,45.5-24.35l420.24-420.24c34.78-34.78,34.78-91.16,0-125.93l-34.77-34.78ZM580.18,143.06c11.59-11.59,30.39-11.59,41.98,0l34.77,34.78c11.59,11.59,11.59,30.39,0,41.98l-79.3,79.3-76.75-76.75,79.3-79.3ZM458.9,264.34l-298.96,298.96c-4.14,4.14-6.97,9.42-8.12,15.17l-17.43,87.13,87.13-17.43c5.75-1.15,11.02-3.97,15.17-8.12l298.96-298.96-76.75-76.75Z" />
                                 </svg>
@@ -119,7 +139,27 @@ $tasks = Task::getAll();
                 <?php endforeach; ?>
             </div>
         </div>
-        <script src="js/script.js"></script>
+
+        <!-- Edit Modal -->
+        <div id="editModal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-500 bg-opacity-75 flex items-center justify-center">
+            <div class="w-1/3 p-12 bg-white rounded-lg relative">
+                <h3 class="font-bold text-2xl pb-8">HUB Task:</h3>
+                <form class="flex flex-col gap-6" action="" method="post">
+                    <input type="hidden" name="id" id="edit-task-id">
+                    <input class="w-full px-3.5 py-2.5 col-span-2 text-lg rounded border-gray-300 border-2" type="text" id="edit-task-name" name="task_name" placeholder="Task name..." required>
+                    <div class="flex justify-between gap-4">
+                        <button class="w-1/2 px-3 py-2.5 font-extrabold uppercase rounded cursor-pointer bg-gray-100 border-gray-300 border-2" type="button" onclick="closeEditModal()">Cancel</button>
+                        <button class="w-1/2 px-3 py-2.5 font-extrabold uppercase rounded cursor-pointer bg-yellow-400 border-yellow-400 border-2" type="submit" name="update">Update</button>
+                    </div>
+                </form>
+                <button class="w-7 h-7 m-3.5 p-px absolute right-0 top-0 font-bold opacity-25 leading-none" onclick="closeEditModal()">
+                    <img class="w-full h-auto" src="./assets/close.svg" alt="close icon">
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <script src="js/script.js"></script>
 </body>
 
 </html>
