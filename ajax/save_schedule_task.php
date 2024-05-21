@@ -18,7 +18,7 @@ if (!empty($_POST)) {
     $response = [
         'status' => 'success',
         'body' => [
-            'task' => $taskInfo['name'],
+            'task_name' => $taskInfo['name'],
             'task_id' => $task->getTaskId(),
             'user_id' => $task->getUserId(),
             'date' => $task->getDate(),

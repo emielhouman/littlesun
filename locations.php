@@ -73,7 +73,7 @@ $locations = Location::getAll();
 <body>
     <div class="flex w-full relative">
         <?php include_once(__DIR__ . "/nav.inc.php") ?>
-        <div id="popup-scrn" class="w-full h-full items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;"></div>
+        <div id="popup-scrn" class="w-screen h-screen items-center justify-center absolute z-10 top-0 left-0 bg-black/50" style="display: none;"></div>
         <div class="ml-72 px-14 py-10 flex-1">
             <h2 class="font-extrabold text-4xl pb-12">HUB Locations</h2>
             
