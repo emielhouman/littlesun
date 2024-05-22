@@ -1,8 +1,8 @@
 <?php
 session_start();
 include_once(__DIR__ . "/bootstrap.php");
-include_once(__DIR__ . "/classes/TimeOffRequest.php");
-include_once(__DIR__ . "/classes/SickRequest.php");
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_SESSION['user_id']; // Assuming you have user sessions
@@ -94,10 +94,6 @@ $sickRequests = SickRequest::getSickRequests($_SESSION['user_id']);
                         <div class="mb-4">
                             <label for="sickEndDate" class="block text-lg font-semibold">End Date:</label>
                             <input type="date" id="sickEndDate" name="sickEndDate" class="w-full border-2 border-gray-300 p-2 rounded">
-                        </div>
-                        <div class="mb-4">
-                            <label for="reason" class="block text-lg font-semibold">Reason:</label>
-                            <textarea id="reason" name="reason" class="w-full border-2 border-gray-300 p-2 rounded"></textarea>
                         </div>
                         <div class="flex justify-end">
                             <button type="button" id="closeCallSickModal" class="px-4 py-2 bg-gray-300 rounded mr-4">Cancel</button>

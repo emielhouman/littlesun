@@ -47,6 +47,20 @@ class TimeOffRequest
         $stmt = $conn->prepare("UPDATE time_off SET approved = 0, declined = 1 WHERE id = ?");
         $stmt->execute([$requestId]);
     }
+
+    public static function getApprovedTimeOffHours($userId, $startDate, $endDate)
+    {
+        $conn = Db::getConnection();
+        $stmt = $conn->prepare("SELECT SUM(TIMESTAMPDIFF(HOUR, start_time, end_time)) AS holiday_hours
+                                FROM time_off
+                                WHERE user_id = :user_id AND approved = 1 AND date_start >= :start_date AND date_end <= :end_date");
+        $stmt->bindValue(':user_id', $userId);
+        $stmt->bindValue(':start_date', $startDate);
+        $stmt->bindValue(':end_date', $endDate);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['holiday_hours'] : 0;
+    }
 }
 ?>
 
