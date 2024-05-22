@@ -2,12 +2,12 @@
 session_start();
 include_once(__DIR__ . "/bootstrap.php");
 
-// Redirect based on user_id
-$userId = $_SESSION['user_id'];
-if ($userId == 1) {
+// Redirect based on role_id
+$roleId = $_SESSION['role_id'] ?? null; // Use null coalescing operator to avoid undefined index error
+if ($roleId == 1) {
     header("Location: tasks.php");
     exit();
-} elseif (!in_array($userId, [3])) {
+} elseif ($roleId == 3) {
     header("Location: timeoff.php");
     exit();
 }
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'], $_POST[
         TimeOffRequest::declineRequest($requestId);
     }
 
-    header("Location: " . $_SERVER['REQUEST_URI']);
+    header("Location: index.php"); // Avoid using $_SERVER['REQUEST_URI'] directly
     exit();
 }
 
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['report_type'], $_GET['u
                 </form>
 
                 <!-- Report Results -->
-                <?php if ($report && $reportType === 'sick_days'): ?>
+                <?php if ($report): ?>
                 <div class="mt-12 p-12 bg-white rounded-lg shadow-lg relative w-full">
                     <h4 class="font-bold text-xl pb-4">Report Results</h4>
                     <?php if ($userId === 'all'): ?>
@@ -215,14 +215,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['report_type'], $_GET['u
                             <thead>
                                 <tr class="bg-gray-200">
                                     <th class="px-4 py-2 border">Member:</th>
-                                    <th class="px-4 py-2 border">Sick Days</th>
+                                    <th class="px-4 py-2 border">
+                                        <?php echo ($reportType === 'hours_worked') ? 'Hours Worked' : (($reportType === 'holiday_hours') ? 'Holiday Hours' : 'Sick Days'); ?>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($report as $entry): ?>
                                 <tr>
                                     <td class="px-4 py-2 border"><?php echo htmlspecialchars($entry['name']); ?></td>
-                                    <td class="px-4 py-2 border"><?php echo htmlspecialchars($entry['sick_days']); ?></td>
+                                    <td class="px-4 py-2 border">
+                                        <?php echo htmlspecialchars($entry[($reportType === 'hours_worked') ? 'hours_worked' : (($reportType === 'holiday_hours') ? 'holiday_hours' : 'sick_days')]); ?>
+                                    </td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -230,7 +234,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['report_type'], $_GET['u
                     <?php else: ?>
                         <div class="bg-white p-4 rounded-lg shadow-md mt-4 w-full">
                             <p class="font-bold">Member: <?php echo htmlspecialchars($report['name']); ?></p>
-                            <p>Sick Days: <?php echo htmlspecialchars($report['sick_days']); ?></p>
+                            <p>
+                                <?php echo ($reportType === 'hours_worked') ? 'Hours Worked' : (($reportType === 'holiday_hours') ? 'Holiday Hours' : 'Sick Days'); ?>: 
+                                <?php echo htmlspecialchars($report[($reportType === 'hours_worked') ? 'hours_worked' : (($reportType === 'holiday_hours') ? 'holiday_hours' : 'sick_days')]); ?>
+                            </p>
                         </div>
                     <?php endif; ?>
                 </div>
