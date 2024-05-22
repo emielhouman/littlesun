@@ -173,7 +173,7 @@
         let formData = new FormData();
         formData.append('calendarCmds', JSON.stringify($calendarCmds));
 
-        fetch('./calendar.php', {
+        fetch('./schedule.php', {
             method: 'POST',
             body: formData
         })

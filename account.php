@@ -3,7 +3,7 @@ session_start();
 include_once(__DIR__ . "/bootstrap.php");
 
 $id = $_SESSION['user_id'];
-$user = User::getUserInfo($id);
+$user = User::getUserDetails($id);
 
 if (!$user) {
     echo "User not found.";

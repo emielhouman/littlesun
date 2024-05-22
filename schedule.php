@@ -88,11 +88,11 @@ function calculateCalendarCells($firstMonthDay, $lastMonthDay)
 {
     $monthDays = ($lastMonthDay + $firstMonthDay) - 1;
     $calendarCells = $monthDays + (7 - $monthDays % 7) % 7;
-    return $calendarCells; 
+    return $calendarCells;
 }
 
 function createCalendarCells($day, $date, $tasks, $isCurrentMonth)
-{   
+{
     $cellClass = $isCurrentMonth ? 'text-black/75 bg-white cursor-pointer overflow-auto calendar__cell' : 'text-black/25 bg-gray-100';
     $calendarCell = '<div class="h-28 p-1.5 flex flex-col items-end gap-1.5 text-xs border border-gray-200 ' . $cellClass . '" data-date="' . $date . '">
     <span class="w-8 p-0.5 px-1 flex items-center ' . ($date === date('Y-m-d') ? 'justify-center font-extrabold text-white bg-yellow-400 rounded-full' : 'justify-end') . '">' . $day . '</span>';
@@ -140,7 +140,7 @@ $calendar = createCalendar($currentMonth, $currentYear);
                         <label class="font-semibold text-lg" for="task">HUB Task:</label>
                         <select class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="task" name="task" required>
                             <option value="">Select a HUB Task</option>
-                            <?php foreach ($tasks as $task): ?>
+                            <?php foreach ($tasks as $task) : ?>
                                 <option value="<?php echo $task['id'] ?>"><?php echo $task['name'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -149,7 +149,7 @@ $calendar = createCalendar($currentMonth, $currentYear);
                         <label class="font-semibold text-lg" for="user">HUB Member:</label>
                         <select class="w-full h-12 px-2.5 text-lg rounded border-2 border-gray-300" id="user" name="user" required>
                             <option value="">Select a HUB Member</option>
-                            <?php foreach ($members as $member): ?>
+                            <?php foreach ($members as $member) : ?>
                                 <option value="<?php echo $member['id'] ?>"><?php echo $member['firstname'] . " " . $member['lastname'] ?></option>
                             <?php endforeach; ?>
                         </select>
