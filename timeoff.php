@@ -1,8 +1,8 @@
 <?php
 session_start();
 include_once(__DIR__ . "/bootstrap.php");
-include_once(__DIR__ . "/classes/TimeOffRequest.php");
-include_once(__DIR__ . "/classes/SickRequest.php");
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_SESSION['user_id']; // Assuming you have user sessions

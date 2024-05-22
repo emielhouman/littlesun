@@ -2,6 +2,16 @@
 session_start();
 include_once(__DIR__ . "/bootstrap.php");
 
+// Redirect based on user_id
+$userId = $_SESSION['user_id'];
+if ($userId == 1) {
+    header("Location: tasks.php");
+    exit();
+} elseif (!in_array($userId, [3])) {
+    header("Location: timeoff.php");
+    exit();
+}
+
 // Check if the user is a manager and get their location_id
 $managerId = $_SESSION['user_id'];
 $managerLocation = Member::getMemberWithId($managerId);

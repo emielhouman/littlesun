@@ -2,6 +2,11 @@
 session_start();
 include_once(__DIR__ . "/bootstrap.php");
 
+if ($_SESSION['role_id'] !== 2) {
+    header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php'));
+    exit();
+}
+
 // Assuming the manager's ID is stored in the session
 $managerId = $_SESSION['user_id']; // Adjust this based on your session variable
 $manager = Member::getMemberWithId($managerId);
