@@ -17,7 +17,7 @@
             </div>
         </form>
         <button class="w-7 h-7 m-3.5 p-px absolute right-0 top-0 font-bold opacity-25 leading-none close__btn">
-            <img class="w-full h-auto" src="./assets/close.svg" alt="close icon">
+            <img class="w-full h-auto" src="./assets/icons/close.svg" alt="close icon">
         </button></div>`;
 
         const $closeBtns = $popup.querySelectorAll('.close__btn');
@@ -46,7 +46,7 @@
             </div>
         </form>
         <button class="w-7 h-7 m-3.5 p-px absolute right-0 top-0 font-bold opacity-25 leading-none close__btn">
-            <img class="w-full h-auto" src="./assets/close.svg" alt="close icon">
+            <img class="w-full h-auto" src="./assets/icons/close.svg" alt="close icon">
         </button></div>`;
 
         const $closeBtns = $popup.querySelectorAll('.close__btn');
